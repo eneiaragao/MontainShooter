@@ -14,10 +14,18 @@ class EntityFactory: # Removida a herança de Level
         match entity_name:
             case 'Level1Bg': # Corrigida a sintaxe do case
                 list_bg = []
-                for i in range(7):
+                for i in range(7):#LEVEL1BG  IMAGES NUMBER
                     # Corrigido o nome da string e a passagem da posição
                     list_bg.append(Background(f'Level1Bg{i}', (0,0)))
                     list_bg.append(Background(f'Level1Bg{i}', (WIN_WIDTH, 0)))
+                return list_bg
+
+            case 'Level2Bg':
+                list_bg = []
+                for i in range(5):#LEVEL2BG  IMAGES NUMBER
+                    # Corrigido o nome da string e a passagem da posição
+                    list_bg.append(Background(f'Level2Bg{i}', (0, 0)))
+                    list_bg.append(Background(f'Level2Bg{i}', (WIN_WIDTH, 0)))
                 return list_bg
             case 'Player1':
                 return Player('Player1', (10,WIN_HEIGHT/2 -30))

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import random
 import sys
+from idlelib.editor import index2line
 from random import choice
 
 import pygame.display
@@ -13,25 +14,30 @@ from code.Entity import Entity
 from code.EntityFactory import EntityFactory
 from code.EntityMediator import EntityMediator
 from code.Player import Player
-from code.const import C_WHITE, WIN_HEIGHT, MENU_OPTION, EVENT_ENEMY, SPAWN_TIME, C_GREEN, C_CYAN
+from code.const import C_WHITE, WIN_HEIGHT, MENU_OPTION, EVENT_ENEMY, SPAWN_TIME, C_GREEN, C_CYAN, EVENT_TIMEOUT, \
+    TIMEOUT_STEP, TIMEOUT_LEVEL
 
 
 class Level:
-    def __init__(self, window, name, game_mode):
+    def __init__(self, window:Surface, name:str, game_mode:str, player_score:list[int]):
+        self.timeout = TIMEOUT_LEVEL  # 20 segundos
         self.window = window
         self.name = name
         self.game_mode = game_mode
         self.entity_list: list[Entity] = []
-        self.entity_list.extend(EntityFactory.get_entity('Level1Bg'))
-        self.entity_list.append(EntityFactory.get_entity('Player1'))  #adiciona nave player 1
-        self.timeout = 2000  #20 segundos
-
+        self.entity_list.extend(EntityFactory.get_entity(self.name+'Bg'))
+        player= EntityFactory.get_entity('Player1') #adiciona nave player 1
+        player.score=player_score[0]
+        self.entity_list.append(player)
         if game_mode in [MENU_OPTION[1], MENU_OPTION[2]]:  #ESCOLHENDO O PLAYER 2
-            self.entity_list.append(EntityFactory.get_entity('Player2'))  # adiciona nave player 2
+            player = EntityFactory.get_entity('Player2')  # adiciona nave player 1
+            player.score = player_score[1]
+            self.entity_list.append(player) # adiciona nave player 2
         # A CADA X TEMPO CRIA INIMIGO
         pygame.time.set_timer(EVENT_ENEMY, SPAWN_TIME)
+        pygame.time.set_timer(EVENT_TIMEOUT, TIMEOUT_STEP)
 
-    def run(self, ):
+    def run(self, player_score:list[int]):
         pygame.mixer.music.load(f'./asset/{self.name}.mp3')
         pygame.mixer_music.play(-1)
         clock = pygame.time.Clock()
@@ -49,13 +55,44 @@ class Level:
                 if ent.name == 'Player2':
                     self.level_text(14, f'Player2 - Health: {ent.health} | Score:{ent.score} ', C_CYAN, (10, 45))
 
-            for event in pygame.event.get():  #EVENTO PARA FECHAR A JANELA DO JOGO
+            for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                if event.type == EVENT_ENEMY:#adiciona na lista  o inimigo
-                    choice = random.choice(('Enemy1','Enemy2'))
+
+                if event.type == EVENT_ENEMY:
+                    choice = random.choice(('Enemy1', 'Enemy2'))
                     self.entity_list.append(EntityFactory.get_entity(choice))
+
+                # Alinhado com o IF de cima!
+                if event.type == EVENT_TIMEOUT:
+                    self.timeout -= TIMEOUT_STEP  # Use -= para diminuir o tempo
+                    if self.timeout == 0:
+                        for ent in self.entity_list:
+                            if isinstance(ent, Player) and ent.name=='Player1':
+                                player_score[0] = ent.score
+                            if isinstance (ent,Player) and ent.name=='Player2':
+                                player_score[1] = ent.score
+                        return True
+
+
+
+
+
+
+
+
+                found_player=False
+                for ent in self.entity_list:
+                    if isinstance(ent,Player):
+                        found_player=True
+
+                if not found_player:
+                     return False
+
+
+
+
 
 
 
@@ -69,7 +106,7 @@ class Level:
             EntityMediator.verify_collision(entity_list=self.entity_list)#invoca as colisões
             EntityMediator.verify_health(entity_list=self.entity_list)  # verifica as vidas
 
-            pass
+
 
     def level_text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):
         text_font: Font = pygame.font.SysFont(name='Lucila Sans Typewriter', size=text_size)
