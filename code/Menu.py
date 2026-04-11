@@ -23,7 +23,7 @@ class Menu:
             self.menu_text(50, "Mountain", C_ORANGE, ((WIN_WIDTH / 2), 60))
             self.menu_text(50, "Shooter", C_ORANGE, ((WIN_WIDTH / 2), 110))
 
-            for i in range(len(MENU_OPTION)):#evento para colocar a cor na tela onde esta o cursor
+            for i in range(len(MENU_OPTION)):#evento para colocar a cor na tela onde está o cursor
                 if i==menu_option:
                     self.menu_text(20, MENU_OPTION[i], C_YELLOW, ((WIN_WIDTH / 2), 180 + 25 * i))
                 else:
@@ -52,11 +52,6 @@ class Menu:
 
                     if event.key == pygame.K_RETURN:  # verifica se evento para TECLA ENTER
                         return MENU_OPTION[menu_option]
-
-
-
-
-
 # tela do jogo
     def menu_text(self, text_size: int, text: str, text_color: tuple, text_center_pos: tuple):
         text_font: Font = pygame.font.SysFont(name="Lucida Sans Typewriter", size=text_size)

@@ -3,9 +3,7 @@ from datetime import datetime
 
 import pygame
 from pygame import Surface, Rect, K_RETURN, K_BACKSPACE, KEYDOWN, K_ESCAPE
-from pygame.examples.aliens import Score
 from pygame.font import Font
-
 from code.DBproxy import DBProxy
 from code.const import C_YELLOW, SCORE_POS, MENU_OPTION, C_WHITE
 
@@ -27,10 +25,10 @@ class Score:
          while True:
              self.window.blit(source=self.surf, dest= self.rect)
              self.score_text(48, 'You Win!!',C_YELLOW, SCORE_POS['Title'])
+             text = 'Enter Play 1 name (4 characters):'
+             score = player_score[0]
              if game_mode==MENU_OPTION[0]:
                  score=player_score[0]
-                 text = 'Enter Play 1 name (4 characters):'
-
              if game_mode == MENU_OPTION[2]:
                  if player_score[0]>=player_score[1]:
                      score = player_score[0]
@@ -39,6 +37,7 @@ class Score:
                      score = player_score[1]
                      text = 'Enter Play 2 name (4 characters):'
              self.score_text(20,text,C_WHITE, SCORE_POS['EnterName'])
+
              for event in pygame.event.get():
                  if event.type == pygame.QUIT:
                      pygame.quit()
@@ -60,18 +59,24 @@ class Score:
      def show(self):
          pygame.mixer_music.load('./asset/Score.mp3')
          pygame.mixer_music.play(-1)
-         self.window.blit(source=self.surf, dest= self.rect)
-         self.score_text(48,'TOP 10 SCORE', C_YELLOW, SCORE_POS['Title'])
-         self.score_text(20, 'NAME    SCORE       DATE', C_WHITE, SCORE_POS['Name'])
-         db_proxy=DBProxy('DBScore')
-         list_score=db_proxy.retrieve_top10()
+
+         db_proxy = DBProxy('DBScore')
+         list_score = db_proxy.retrieve_top10()  # Pega os 10 maiores do banco
          db_proxy.close()
-         if list_score:
-            for player_score in list_score:
-               id_, name, scor,date =player_score
-               self.score_text(20,f'{name}    {scor:05d}    {date}',C_YELLOW,
-                            SCORE_POS[list_score.index(player_score)])
+
          while True:
+             # REDESENHA TUDO DENTRO DO LOOP
+             self.window.blit(source=self.surf, dest=self.rect)
+             self.score_text(48, 'TOP 10 SCORE', C_YELLOW, SCORE_POS['Title'])
+             self.score_text(20, 'NAME    SCORE       DATE', C_WHITE, SCORE_POS['Name'])
+
+             if list_score:
+                 # Usamos enumerate para ter o índice (0, 1, 2...) de cada linha
+                 for index, player_score in enumerate(list_score):
+                     id_, nome, scor, date = player_score
+                     self.score_text(20, f'{nome}    {scor:05d}    {date}', C_YELLOW,
+                                     SCORE_POS[index])  # Usa o índice da lista (0 a 9)
+
              for event in pygame.event.get():
                  if event.type == pygame.QUIT:
                      pygame.quit()
