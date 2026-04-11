@@ -1,7 +1,6 @@
 #C
 import pygame
-
-
+from pygame.examples.grid import WINDOW_WIDTH
 
 C_ORANGE = (255, 128, 0)
 C_WHITE = (255, 255, 255)
@@ -133,11 +132,26 @@ ENTITY_SCORE = {
 
 #S
 SPAWN_TIME = 4000
+SCORE_POS={
+    'Title':(WINDOW_WIDTH / 3,50),
+    'EnterName':(WINDOW_WIDTH /3,80),
+    'Name':(WINDOW_WIDTH /3,95),
+    0:(WINDOW_WIDTH /3,110),
+    1:(WINDOW_WIDTH /3,130),
+    2:(WINDOW_WIDTH /3,150),
+    3:(WINDOW_WIDTH /3,170),
+    4:(WINDOW_WIDTH /3,190),
+    5:(WINDOW_WIDTH /3,210),
+    6:(WINDOW_WIDTH /3,230),
+    7:(WINDOW_WIDTH /3,250),
+    8:(WINDOW_WIDTH /3,270),
+    9:(WINDOW_WIDTH /3,290),
 
+}
 
 #T
 TIMEOUT_STEP=100
-TIMEOUT_LEVEL=30000
+TIMEOUT_LEVEL=10000
 #W
 WIN_WIDTH = 576
 WIN_HEIGHT = 324
