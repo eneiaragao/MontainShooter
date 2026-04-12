@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 import random
 import sys
-from idlelib.editor import index2line
-from random import choice
+
 
 import pygame.display
 from pygame import Surface, Rect
